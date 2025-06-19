@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlickFinder</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1f1f1f;
+      color: #fff;
+    }
+
+    /* HEADER */
+    header {
+      background-color: #0d1a26;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #00ffcc;
+    }
+
+    nav a {
+      margin: 0 15px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .fav-btn {
+      background-color: #00ffcc;
+      color: #000;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    /* HERO SLIDER */
+    .hero-slider {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      margin-top: 60px;
+    }
+
+    .slider-container {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      transition: transform 0.5s ease;
+    }
+
+    .slide {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .slide-content {
+      background-color: rgba(0,0,0,0.5);
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .slide-content h1 {
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .slide-content p {
+      margin: 1rem 0;
+      color: #ccc;
+    }
+
+    .slide-content button {
+      padding: 0.5rem 1.5rem;
+      border: none;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .slider-controls {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slider-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      margin: 0 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .slider-dot.active {
+      background-color: #00ffcc;
+    }
+
+    .slider-arrow {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      margin: 0 15px;
+      transition: color 0.3s;
+    }
+
+    .slider-arrow:hover {
+      color: #00ffcc;
+    }
+
+    /* MOVIE LIST */
+    .movie-section {
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .movie-section h2 {
+      font-family: 'cursive';
+      font-size: 2rem;
+      color: #00ffcc;
+    }
+
+    .filter-buttons button {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: 1px solid #00ffcc;
+      background-color: transparent;
+      color: #00ffcc;
+      cursor: pointer;
+    }
+
+    .search-bar {
+      margin: 1rem auto;
+      max-width: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .search-bar input {
+      padding: 0.5rem;
+      width: 80%;
+      border-radius: 10px;
+      border: none;
+    }
+
+    .movie-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .movie-card {
+      background-color: #2e2e2e;
+      border-radius: 10px;
+      overflow: hidden;
+      width: 200px;
+      text-align: left;
+    }
+
+    .movie-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .movie-card p {
+      padding: 0.5rem;
+    }
+
+    /* FAQ ACCORDION */
+    .faq {
+      padding: 2rem;
+    }
+
+    .faq-item {
+      background-color: #2e2e2e;
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .faq-item.active .answer {
+      display: block;
+    }
+
+    .answer {
+      display: none;
+      color: #00ffcc;
+      margin-top: 0.5rem;
+    }
+
+    /* FOOTER */
+    footer {
+      background-color: #121212;
+      padding: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      color: #ccc;
+    }
+
+    .footer-col {
+      flex: 1 1 200px;
+      margin: 1rem;
+    }
+
+    .footer-col h4 {
+      color: #00ffcc;
+      margin-bottom: 1rem;
+    }
+
+    .footer-col a {
+      display: block;
+      text-decoration: none;
+      color: #ccc;
+      margin: 0.3rem 0;
+    }
+
+    .newsletter input[type="email"] {
+      padding: 0.5rem;
+      width: 80%;
+      margin-bottom: 0.5rem;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .newsletter button {
+      padding: 0.5rem 1rem;
+      background: #00ffcc;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .slide-content h1 {
+        font-size: 2rem;
+      }
+      
+      .slide-content p {
+        font-size: 0.9rem;
+      }
+      
+      .slider-controls {
+        bottom: 20px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">Flick<span>Finder</span></div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Tv Show</a>
+      <a href="#">Movie</a>
+      <a href="#">Upcoming</a>
+    </nav>
+    <div class="fav-btn">Favorite ♡</div>
+  </header>
+
+  <!-- HERO SLIDER -->
+  <section class="hero-slider">
+    <div class="slider-container">
+      <!-- Slide 1 -->
+      <div class="slide" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://wallpapercave.com/wp/wp7093839.jpg');">
+        <div class="slide-content">
+          <h1>Bringing the Big Screen to Your Screen</h1>
+          <p>Discover, critique, and celebrate movies with honest reviews and fresh takes on every film.</p>
+          <button>Discover More.</button>
+        </div>
+      </div>
+      
+      <!-- Slide 2 -->
+      <div class="slide" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://wallpapercave.com/wp/wp4923981.jpg');">
+        <div class="slide-content">
+          <h1>Explore Thousands of Movies</h1>
+          <p>Find your next favorite film with our comprehensive movie database and personalized recommendations.</p>
+          <button>Browse Movies</button>
+        </div>
+      </div>
+      
+      <!-- Slide 3 -->
+      <div class="slide" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://wallpapercave.com/wp/wp4056410.jpg');">
+        <div class="slide-content">
+          <h1>Expert Reviews & Ratings</h1>
+          <p>Get trusted opinions from professional critics and fellow movie enthusiasts.</p>
+          <button>Read Reviews</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="slider-controls">
+      <button class="slider-arrow prev-btn">❮</button>
+      <div class="slider-dot active"></div>
+      <div class="slider-dot"></div>
+      <div class="slider-dot"></div>
+      <button class="slider-arrow next-btn">❯</button>
+    </div>
+  </section>
+
+  <!-- MOVIE LIST -->
+  <section class="movie-section">
+    <h2>MOVIE LIST</h2>
+    <div class="filter-buttons">
+      <button>Marvel Movie</button>
+      <button>Funny Movie</button>
+      <button>Animation Movie</button>
+      <button>Web Series Movie</button>
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="🔍 Search here.">
+    </div>
+    <div class="movie-cards">
+      <div class="movie-card">
+        <img src="https://m.media-amazon.com/images/I/81MZMdYa-5L._AC_UF894,1000_QL80_.jpg" alt="Ping Pong">
+        <p>Ping Pong the Animation</p>
+      </div>
+      <div class="movie-card">
+        <img src="https://upload.wikimedia.org/wikipedia/en/2/2e/Azumanga_Daioh_DVD.jpg" alt="Azumanga Daioh">
+        <p>Azumanga Daioh: The Animation</p>
+      </div>
+      <div class="movie-card">
+        <img src="https://m.media-amazon.com/images/I/81Fj7Z9brIL._AC_UF894,1000_QL80_.jpg" alt="Wallace & Gromit">
+        <p>Wallace & Gromit: A Grand Day Out</p>
+      </div>
+      <div class="movie-card">
+        <img src="https://m.media-amazon.com/images/I/71dbVTXxKML._AC_UF894,1000_QL80_.jpg" alt="Danganronpa">
+        <p>Danganronpa: The Animation</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <p><strong>1. What is this website about?</strong></p>
+      <div class="answer">This website provides in-depth reviews, ratings, and analysis of movies from different genres, periods, and countries.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <p><strong>2. How are movies rated?</strong></p>
+      <div class="answer">Movies are rated based on critic and user reviews.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <p><strong>3. Can I submit my own reviews?</strong></p>
+      <div class="answer">Yes! You can submit your reviews after login.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <p><strong>4. Is the content on this website free?</strong></p>
+      <div class="answer">Yes, all content is free to access.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFAQ(this)">
+      <p><strong>5. How do I search for a specific movie?</strong></p>
+      <div class="answer">Use the search bar above to look up any movie.</div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-col">
+      <h4>FlickFinder</h4>
+      <a href="#">Home</a>
+      <a href="#">About us</a>
+      <a href="#">Contact us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <a href="#">TV Show</a>
+      <a href="#">Web Series</a>
+      <a href="#">Hollywood</a>
+      <a href="#">Bollywood</a>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <a href="#">FAQs</a>
+      <a href="#">Search Movie</a>
+    </div>
+    <div class="footer-col newsletter">
+      <h4>Newsletter</h4>
+      <input type="email" placeholder="mail@pagedone.com">
+      <div><input type="checkbox"> I agree with <a href="#">Privacy Policy</a> and <a href="#">Terms</a></div>
+      <button>Send</button>
+    </div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    // FAQ Toggle
+    function toggleFAQ(el) {
+      el.classList.toggle('active');
+    }
+
+    // Slider Functionality
+    const slider = document.querySelector('.slider-container');
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.slider-dot');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    let currentSlide = 0;
+    const slideCount = slides.length;
+    let slideInterval;
+
+    function showSlide(index) {
+      slider.style.transform = `translateX(-${index * 100}%)`;
+      
+      // Update active dot
+      dots.forEach(dot => dot.classList.remove('active'));
+      dots[index].classList.add('active');
+      
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slideCount;
+      showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + slideCount) % slideCount;
+      showSlide(currentSlide);
+    }
+
+    function startSlider() {
+      slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    // Initialize slider
+    showSlide(0);
+    startSlider();
+
+    // Event listeners
+    nextBtn.addEventListener('click', () => {
+      nextSlide();
+      resetInterval();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      prevSlide();
+      resetInterval();
+    });
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        showSlide(index);
+        resetInterval();
+      });
+    });
+
+    function resetInterval() {
+      clearInterval(slideInterval);
+      startSlider();
+    }
+
+    // Pause on hover
+    const sliderSection = document.querySelector('.hero-slider');
+    sliderSection.addEventListener('mouseenter', () => {
+      clearInterval(slideInterval);
+    });
+
+    sliderSection.addEventListener('mouseleave', () => {
+      startSlider();
+    });
+  </script>
+
+</body>
+</html>
